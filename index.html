@@ -3,28 +3,116 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>イベントLP</title>
+  <title>イベントLP（画像上ボタン対応）</title>
   <style>
-    body{margin:0;font-family:sans-serif;}
-    .wrap{max-width:780px;margin:0 auto;}
-    img{width:100%;display:block;}
+    :root{
+      /* 調整用（% or px可）。値は「top left width height」の順で使われます */
+      --overlay1-top: 18%;    /* 画像上の1つめボタンの top */
+      --overlay1-left: 8%;    /* left */
+      --overlay1-width: 84%;  /* 幅 */
+      --overlay1-height: 8%;  /* 高さ */
+
+      --overlay2-top: 58%;    /* 2つめボタン */
+      --overlay2-left: 8%;
+      --overlay2-width: 84%;
+      --overlay2-height: 8%;
+    }
+
+    html,body{margin:0;padding:0;font-family:system-ui,-apple-system,Helvetica,Roboto,"Hiragino Kaku Gothic ProN","Noto Sans JP";background:#fff;color:#111;}
+    .wrap{max-width:780px;margin:0 auto;position:relative;}
+    .hero{position:relative;}
+    .hero img{display:block;width:100%;height:auto;}
+
+    /* 画像上に重ねる透明リンク（クリック領域） */
+    .img-link{
+      position:absolute;
+      display:block;
+      z-index:100;
+      background:transparent;
+      /* アクセシビリティ用にフォーカス時のアウトライン */
+      outline: none;
+    }
+    /* 見やすく調整するときに枠を出すためのクラス（デバッグ用） */
+    .img-link.debug{ background: rgba(255, 0, 120, 0.12); border:1px dashed rgba(255,0,120,0.35); }
+
+    /* 固定CTA */
     .cta-fixed{
-      position:fixed;bottom:0;left:0;right:0;
-      background:rgba(255,255,255,0.9);
-      padding:12px;text-align:center;
+      position:fixed;left:0;right:0;bottom:0;
+      display:flex;justify-content:center;padding:12px;
+      background:linear-gradient(0deg, rgba(255,255,255,0.95), rgba(255,255,255,0.6));
+      z-index:1200;box-shadow:0 -6px 18px rgba(0,0,0,0.08);
     }
     .cta{
-      background:#ff6b6b;color:#fff;padding:14px 24px;
-      border-radius:999px;text-decoration:none;font-weight:bold;
+      display:inline-flex;align-items:center;justify-content:center;
+      height:56px;padding:0 22px;border-radius:999px;
+      background:#ff6b6b;color:#fff;text-decoration:none;font-weight:700;font-size:16px;
+      box-shadow:0 6px 18px rgba(0,0,0,0.12);
+    }
+    footer{padding:30px 16px;text-align:center;color:#666;font-size:14px;}
+
+    /* 位置を変数で反映（%やpxどちらでも可） */
+    .link-1{
+      top: var(--overlay1-top);
+      left: var(--overlay1-left);
+      width: var(--overlay1-width);
+      height: var(--overlay1-height);
+    }
+    .link-2{
+      top: var(--overlay2-top);
+      left: var(--overlay2-left);
+      width: var(--overlay2-width);
+      height: var(--overlay2-height);
+    }
+
+    /* スマホで微調整したい場合の例 */
+    @media(min-width:900px){
+      :root{
+        /* デスクトップ時に少し上に寄せるなど必要なら上書き */
+      }
+      .cta{height:60px;font-size:18px;}
     }
   </style>
 </head>
 <body>
-<div class="wrap">
-  <img src="page1.png" alt="LP">
-</div>
-<div class="cta-fixed">
-  <a class="cta" href="https://forms.gle/mEFdhEz3GYKN1fWJ8" target="_blank">参加申し込み（1分）</a>
-</div>
+  <div class="wrap">
+    <header class="hero" id="top">
+      <img src="page1.png" alt="LP">
+      <!-- 画像内のボタン領域：リンク先はあなたのGoogleフォーム -->
+      <a class="img-link link-1" href="https://forms.gle/mEFdhEz3GYKN1fWJ8" target="_blank" rel="noopener noreferrer" aria-label="今すぐイベントに参加する（上）"></a>
+
+      <a class="img-link link-2" href="https://forms.gle/mEFdhEz3GYKN1fWJ8" target="_blank" rel="noopener noreferrer" aria-label="今すぐイベントに参加する（下）"></a>
+    </header>
+
+    <div style="height:120px;"></div> <!-- 下部CTA分の余白 -->
+  </div>
+
+  <div class="cta-fixed" role="region" aria-label="申込ボタン">
+    <a class="cta" href="https://forms.gle/mEFdhEz3GYKN1fWJ8" target="_blank" rel="noopener noreferrer">
+      参加申し込み（1分で完了）
+    </a>
+  </div>
+
+  <footer>
+    主催：就職支援財団　｜　締切：2025/12/7
+  </footer>
+
+  <script>
+    /* --- デバッグ用（任意） ---
+       ページ左上で D キーを押すと画像上のリンク領域が可視化されます（class 'debug' を付与）。
+       公開時はこのスクリプトは無害ですが、不要なら削除してOK。
+    */
+    (function(){
+      let debugOn = false;
+      window.addEventListener('keydown', function(e){
+        if(e.key === 'd' || e.key === 'D'){
+          debugOn = !debugOn;
+          document.querySelectorAll('.img-link').forEach(el=>{
+            if(debugOn) el.classList.add('debug');
+            else el.classList.remove('debug');
+          });
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
